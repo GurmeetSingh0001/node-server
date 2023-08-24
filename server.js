@@ -3,8 +3,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const multer = require("multer");
-const { fileURLToPath } = require("url");
-const { dirname } = require("path");
+
 const FormData = require("form-data");
 
 const port = 3002;
@@ -28,16 +27,20 @@ app.use(function (req, res, next) {
 app.use(cors())
 
 app.get("/", async (req, res) => {
+  console.log("herhkdhj")
   res.send("server is up and running ");
 });
 
-// ... Define your other routes and middleware ...
 
-// Dynamic import of node-fetch using import()
 
-async () => {
+(async () => {
   try {
-    const fetch = await import("node-fetch");
+        const fetchModule = await import("node-fetch");
+
+    const fetch = fetchModule.default; 
+
+
+
 
     // Your server logic using fetch
     app.post("/createOrganization", async (req, res) => {
@@ -88,6 +91,8 @@ async () => {
       }
     });
     app.get("/getAllUsers", async (req, res) => {
+     
+
       try {
         const clerkResponse = await fetch(
           `${process.env.CLERK_SERVER_URL}/users`,
@@ -102,7 +107,7 @@ async () => {
 
         const clerkData = await clerkResponse.json();
 
-        res.json(clerkData);
+        res.send(clerkData);
       } catch (error) {
         console.log(error);
         res.status(500).json({ error: "An error occurred" });
@@ -160,6 +165,6 @@ async () => {
   } catch (error) {
     console.error("Error importing node-fetch:", error);
   }
-};
+})();
 
 module.exports = app;
