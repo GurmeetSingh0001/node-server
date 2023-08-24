@@ -88,6 +88,8 @@ app.get("/", async (req, res) => {
     });
     app.get("/getAllUsers", async (req, res) => {
       try {
+
+        console.log("getusers")
         const clerkResponse = await fetch(
           `${process.env.CLERK_SERVER_URL}/users`,
           {
