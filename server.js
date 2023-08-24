@@ -56,7 +56,7 @@ app.get("/", async (req, res) => {
 
         res.json(clerkData);
       } catch (error) {
-        res.status(500).json({ error: "An error occurred" });
+        res.status(500).json({ error: error});
       }
     });
 
