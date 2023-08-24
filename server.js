@@ -25,6 +25,8 @@ app.use(function (req, res, next) {
   next();
 });
 
+app.use(cors())
+
 app.get("/", async (req, res) => {
   res.send("server is up and running ");
 });
