@@ -1,19 +1,20 @@
-const express = require("express");
-
-const app = express();
+const app = require("express")();
+const { v4 } = require("uuid");
 const PORT = 4000;
 
 app.listen(PORT, () => {
   console.log(`API listening on PORT ${PORT} `);
 });
 
-app.get("/", (req, res) => {
-  res.send("Hey this is my API running 🥳");
+app.get("/api", (req, res) => {
+  const path = `/api/item/${v4()}`;
+  res.setHeader("Content-Type", "text/html");
+  res.setHeader("Cache-Control", "s-max-age=1, stale-while-revalidate");
+  res.end(`Hello! Go to item: <a href="${path}">${path}</a>`);
 });
 
-app.get("/about", (req, res) => {
-  res.send("This is my about route..... ");
+app.get("/api", (req, res) => {
+  res.end(`Item`);
 });
 
-// Export the Express API
 module.exports = app;
