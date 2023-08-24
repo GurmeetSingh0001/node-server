@@ -97,7 +97,6 @@ app.get("/", async (req, res) => {
             },
           }
         );
-
         const clerkData = await clerkResponse.json();
         res.send(clerkData);
       } catch (error) {
