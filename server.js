@@ -1,19 +1,15 @@
-import express from "express";
-import bodyParser from "body-parser";
-import fetch from "node-fetch";
-import cors from "cors";
-import dotenv from "dotenv";
-import multer from "multer";
-import { fileURLToPath } from "url";
-import { dirname } from "path";
-import FormData from "form-data";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const dotenv = require("dotenv");
+const multer = require("multer");
+const { fileURLToPath } = require("url");
+const { dirname } = require("path");
+const FormData = require("form-data");
 
-// Load environment variables from the server's .env file
-dotenv.config({ path: `${__dirname}/.env` });
-const port = 3001;
+const port = 3002;
 const app = express();
+dotenv.config();
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
@@ -28,120 +24,140 @@ app.use(function (req, res, next) {
   );
   next();
 });
+
 app.get("/", async (req, res) => {
-  res.send("server is  up and running ");
+  res.send("server is up and running ");
 });
-app.post("/createOrganization", async (req, res) => {
+
+// ... Define your other routes and middleware ...
+
+// Dynamic import of node-fetch using import()
+
+async () => {
   try {
-    const clerkResponse = await fetch(
-      `${process.env.CLERK_SERVER_URL}/organizations`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.REACT_APP_CLERK_SECRET_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(req.body),
+    const fetch = await import("node-fetch");
+
+    // Your server logic using fetch
+    app.post("/createOrganization", async (req, res) => {
+      try {
+        const clerkResponse = await fetch.default(
+          `${process.env.CLERK_SERVER_URL}/organizations`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${process.env.REACT_APP_CLERK_SECRET_KEY}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(req.body),
+          }
+        );
+
+        const clerkData = await clerkResponse.json();
+
+        res.json(clerkData);
+      } catch (error) {
+        res.status(500).json({ error: "An error occurred" });
       }
-    );
-
-    const clerkData = await clerkResponse.json();
-
-    res.json(clerkData);
-  } catch (error) {
-    res.status(500).json({ error: "An error occurred" });
-  }
-});
-app.post("/uploadOrgLogo", upload.single("file"), async (req, res) => {
-  try {
-    const userID = req.body.userID;
-    const organisationId = req.body.organisationId;
-    const file = req.file;
-    const formData = new FormData();
-    formData.append("uploader_user_id", userID);
-    formData.append("file", file.buffer, file.originalname);
-
-    const clerkResponse = await fetch(
-      `${process.env.CLERK_SERVER_URL}/organizations/${organisationId}/logo`,
-      {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${process.env.REACT_APP_CLERK_SECRET_KEY}`,
-        },
-        body: formData, // Set the FormData object as the body
-      }
-    );
-    res.status(200).json({ message: "File uploaded successfully" });
-  } catch (error) {
-    console.error("Error uploading file:", error);
-    res.status(500).json({ error: "File upload failed" });
-  }
-});
-
-app.get("/getAllUsers", async (req, res) => {
-  try {
-    const clerkResponse = await fetch(`${process.env.CLERK_SERVER_URL}/users`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${process.env.REACT_APP_CLERK_SECRET_KEY}`,
-        "Content-Type": "application/json",
-      },
     });
 
-    const clerkData = await clerkResponse.json();
+    app.post("/uploadOrgLogo", upload.single("file"), async (req, res) => {
+      try {
+        const userID = req.body.userID;
+        const organisationId = req.body.organisationId;
+        const file = req.file;
+        const formData = new FormData();
+        formData.append("uploader_user_id", userID);
+        formData.append("file", file.buffer, file.originalname);
 
-    res.json(clerkData);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "An error occurred" });
-  }
-});
+        const clerkResponse = await fetch.default(
+          `${process.env.CLERK_SERVER_URL}/organizations/${organisationId}/logo`,
+          {
+            method: "PUT",
+            headers: {
+              Authorization: `Bearer ${process.env.REACT_APP_CLERK_SECRET_KEY}`,
+            },
+            body: formData,
+          }
+        );
+        res.status(200).json({ message: "File uploaded successfully" });
+      } catch (error) {
+        console.error("Error uploading file:", error);
+        res.status(500).json({ error: "File upload failed" });
+      }
+    });
+    app.get("/getAllUsers", async (req, res) => {
+      try {
+        const clerkResponse = await fetch(
+          `${process.env.CLERK_SERVER_URL}/users`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${process.env.REACT_APP_CLERK_SECRET_KEY}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
-app.post("/addUser", async (req, res) => {
-  try {
-    const clerkResponse = await fetch(
-      `${process.env.CLERK_SERVER_URL}/organizations/${req.body.orgId}/invitations
+        const clerkData = await clerkResponse.json();
+
+        res.json(clerkData);
+      } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: "An error occurred" });
+      }
+    });
+
+    app.post("/addUser", async (req, res) => {
+      try {
+        const clerkResponse = await fetch(
+          `${process.env.CLERK_SERVER_URL}/organizations/${req.body.orgId}/invitations
 `,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.REACT_APP_CLERK_SECRET_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(req.body),
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${process.env.REACT_APP_CLERK_SECRET_KEY}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(req.body),
+          }
+        );
+
+        const clerkData = await clerkResponse.json();
+
+        res.json(clerkData);
+      } catch (error) {
+        console.log(error, "error");
+        res.status(500).json({ error: "An error occurred" });
       }
-    );
+    });
 
-    const clerkData = await clerkResponse.json();
+    app.patch("/updateOrganization", async (req, res) => {
+      try {
+        const clerkResponse = await fetch(
+          `${process.env.CLERK_SERVER_URL}/organizations/${req.body.orgId}`,
+          {
+            method: "PATCH",
+            headers: {
+              Authorization: `Bearer ${process.env.REACT_APP_CLERK_SECRET_KEY}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(req.body),
+          }
+        );
 
-    res.json(clerkData);
-  } catch (error) {
-    console.log(error, "error");
-    res.status(500).json({ error: "An error occurred" });
-  }
-});
+        const clerkData = await clerkResponse.json();
+        console.log(clerkData, "clerk");
 
-app.patch("/updateOrganization", async (req, res) => {
-  try {
-    const clerkResponse = await fetch(
-      `${process.env.CLERK_SERVER_URL}/organizations/${req.body.orgId}`,
-      {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${process.env.REACT_APP_CLERK_SECRET_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(req.body),
+        return res.json(clerkData);
+      } catch (error) {
+        res.status(500).json({ error: "An error occurred" });
       }
-    );
+    });
 
-    const clerkData = await clerkResponse.json();
-    console.log(clerkData, "clerk");
-
-    return res.json(clerkData);
+    // ... Define your other routes and middleware ...
   } catch (error) {
-    res.status(500).json({ error: "An error occurred" });
+    console.error("Error importing node-fetch:", error);
   }
-});
+};
 
-export default app;
+module.exports = app;
