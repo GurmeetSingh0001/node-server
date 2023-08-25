@@ -27,7 +27,6 @@ app.use(function (req, res, next) {
 app.use(cors());
 
 app.get("/", async (req, res) => {
-  console.log("herhkdhj");
   res.send("server is up and running ");
 });
 
@@ -40,7 +39,7 @@ app.get("/", async (req, res) => {
     // Your server logic using fetch
     app.post("/createOrganization", async (req, res) => {
       try {
-        const clerkResponse = await fetch.default(
+        const clerkResponse = await fetch(
           `${process.env.CLERK_SERVER_URL}/organizations`,
           {
             method: "POST",
@@ -89,7 +88,7 @@ app.get("/", async (req, res) => {
     app.get("/getAllUsers", async (req, res) => {
       try {
 
-        console.log("getusers")
+      
         const clerkResponse = await fetch(
           `${process.env.CLERK_SERVER_URL}/users`,
           {
