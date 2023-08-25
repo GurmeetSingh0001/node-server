@@ -69,7 +69,7 @@ app.get("/", async (req, res) => {
         formData.append("uploader_user_id", userID);
         formData.append("file", file.buffer, file.originalname);
 
-        const clerkResponse = await fetch.default(
+        const clerkResponse = await fetch(
           `${process.env.CLERK_SERVER_URL}/organizations/${organisationId}/logo`,
           {
             method: "PUT",
@@ -146,7 +146,6 @@ app.get("/", async (req, res) => {
         );
 
         const clerkData = await clerkResponse.json();
-        console.log(clerkData, "clerk");
 
         return res.json(clerkData);
       } catch (error) {
