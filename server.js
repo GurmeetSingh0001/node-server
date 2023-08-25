@@ -153,6 +153,29 @@ app.get("/", async (req, res) => {
       }
     });
 
+
+app.patch("/editUser", async (req, res) => {
+  try {
+    const clerkResponse = await fetch(
+      `${process.env.CLERK_SERVER_URL}/users/${req.body.userId}`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${process.env.REACT_APP_CLERK_SECRET_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(req.body),
+      }
+    );
+
+    const clerkData = await clerkResponse.json();
+
+    res.json(clerkData);
+  } catch (error) {
+    res.status(500).json({ error: "An error occurred" });
+  }
+});
+
     // ... Define your other routes and middleware ...
   } catch (error) {
     console.error("Error importing node-fetch:", error);
